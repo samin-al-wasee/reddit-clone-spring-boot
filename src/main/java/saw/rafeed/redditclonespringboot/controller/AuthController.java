@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
+import saw.rafeed.redditclonespringboot.dto.AuthenticationResponse;
+import saw.rafeed.redditclonespringboot.dto.LogInRequest;
 import saw.rafeed.redditclonespringboot.dto.RegisterRequest;
 import saw.rafeed.redditclonespringboot.service.AuthService;
 
@@ -30,9 +32,16 @@ public class AuthController {
         return new ResponseEntity<>("New User Registered Successfully.", HttpStatus.OK);
     }
 
-    @GetMapping("/accountVerification/{token}")
+    @PostMapping(path = "/login")
+    public AuthenticationResponse logIn(@RequestBody LogInRequest logInRequest){
+        return authService.logIn(logInRequest);
+    }
+
+    @GetMapping(path = "/accountVerification/{token}")
     public ResponseEntity<String> verifyAccount(@PathVariable String token) {
         authService.verifyAccount(token);
         return new ResponseEntity<>("Account Activated Successully.", HttpStatus.OK);
     }
+
+
 }

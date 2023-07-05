@@ -4,12 +4,18 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import saw.rafeed.redditclonespringboot.dto.AuthenticationResponse;
+import saw.rafeed.redditclonespringboot.dto.LogInRequest;
 import saw.rafeed.redditclonespringboot.dto.RegisterRequest;
 import saw.rafeed.redditclonespringboot.exception.SpringRedditException;
 import saw.rafeed.redditclonespringboot.model.NotificationEmail;
@@ -17,6 +23,7 @@ import saw.rafeed.redditclonespringboot.model.User;
 import saw.rafeed.redditclonespringboot.model.VerificationToken;
 import saw.rafeed.redditclonespringboot.repository.UserRepository;
 import saw.rafeed.redditclonespringboot.repository.VerificationTokenRepository;
+import saw.rafeed.redditclonespringboot.security.JWTProvider;
 import saw.rafeed.redditclonespringboot.util.Constants;
 
 @AllArgsConstructor
@@ -26,8 +33,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
-    private MailContentBuilder mailContentBuilder;
-    private MailService mailService;
+    private final MailContentBuilder mailContentBuilder;
+    private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JWTProvider jwtProvider;
 
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
@@ -69,6 +78,14 @@ public class AuthService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User Not Found with id - " + username));
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+    public AuthenticationResponse logIn(LogInRequest logInRequest){
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(logInRequest.getUsername(), 
+        logInRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String authenticationToken = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(authenticationToken, logInRequest.getUsername()); 
     }
     
 }

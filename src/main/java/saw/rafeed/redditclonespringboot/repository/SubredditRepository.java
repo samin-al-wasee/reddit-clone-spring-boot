@@ -11,5 +11,5 @@ import java.util.Optional;
 public interface SubredditRepository extends JpaRepository<Subreddit, Long>{
     // List<Subreddit> findAllByUser(User user);
 
-    Optional<Subreddit> findAllByName(String name);
+    Optional<Subreddit> findByName(String name);
 }

@@ -38,12 +38,12 @@ public class PostController {
         return new ResponseEntity<>(postService.getPost(id), HttpStatus.OK);
     }
 
-    @GetMapping("by-subreddit/{id}")
+    @GetMapping("/by-subreddit/{id}")
     public ResponseEntity<List<PostResponse>> getPostsBySubreddit(@PathVariable Long id) {
         return new ResponseEntity<>(postService.getPostsBySubreddit(id), HttpStatus.OK);
     }
 
-    @GetMapping("by-user/{username}")
+    @GetMapping("/by-user/{username}")
     public ResponseEntity<List<PostResponse>> getPostsByUsername(@PathVariable String username) {
         return new ResponseEntity<>(postService.getPostsByUsername(username), HttpStatus.OK);
     }

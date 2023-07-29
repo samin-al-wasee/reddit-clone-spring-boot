@@ -23,17 +23,17 @@ public class AuthController {
 
     // @GetMapping(path="/")
     // public String test(){
-    //     return "Hello";
+    // return "Hello";
     // }
 
     @PostMapping(path = "/signup")
-    public ResponseEntity<String> signUp(@RequestBody RegisterRequest registerRequest){
+    public ResponseEntity<String> signUp(@RequestBody RegisterRequest registerRequest) {
         authService.signUp(registerRequest);
         return new ResponseEntity<>("New User Registered Successfully.", HttpStatus.OK);
     }
 
     @PostMapping(path = "/login")
-    public AuthenticationResponse logIn(@RequestBody LogInRequest logInRequest){
+    public AuthenticationResponse logIn(@RequestBody LogInRequest logInRequest) {
         return authService.logIn(logInRequest);
     }
 
@@ -42,6 +42,5 @@ public class AuthController {
         authService.verifyAccount(token);
         return new ResponseEntity<>("Account Activated Successully.", HttpStatus.OK);
     }
-
 
 }

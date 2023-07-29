@@ -49,8 +49,9 @@ public class AuthService {
         user.setEnabled(false);
         userRepository.save(user);
         String token = generateVerificationToken(user);
-        String message = mailContentBuilder.build("Thank you for signing up to Spring Reddit, please click on the below url to activate your account : " 
-        + Constants.ACTIVATION_EMAIL + "/" + token);
+        String message = mailContentBuilder.build(
+                "Thank you for signing up to Spring Reddit, please click on the below url to activate your account : "
+                        + Constants.ACTIVATION_EMAIL + "/" + token);
         mailService.sendMail(new NotificationEmail("Please Activate Your Account.", user.getEmail(), message));
     }
 
@@ -76,23 +77,25 @@ public class AuthService {
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User Not Found with id - " + username));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new SpringRedditException("User Not Found with id - " + username));
         user.setEnabled(true);
         userRepository.save(user);
     }
 
-    public AuthenticationResponse logIn(LogInRequest logInRequest){
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(logInRequest.getUsername(), 
-        logInRequest.getPassword()));
+    public AuthenticationResponse logIn(LogInRequest logInRequest) {
+        Authentication authenticate = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(logInRequest.getUsername(),
+                        logInRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String authenticationToken = jwtProvider.generateToken(authenticate);
-        return new AuthenticationResponse(authenticationToken, logInRequest.getUsername()); 
+        return new AuthenticationResponse(authenticationToken, logInRequest.getUsername());
     }
 
     @Transactional(readOnly = true)
     User getCurrentUser() {
-        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
-                getContext().getAuthentication().getPrincipal();
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder
+                .getContext().getAuthentication().getPrincipal();
         return userRepository.findByUsername(principal.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
     }

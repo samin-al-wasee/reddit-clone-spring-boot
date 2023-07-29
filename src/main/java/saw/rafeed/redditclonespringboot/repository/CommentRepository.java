@@ -7,9 +7,7 @@ import java.util.List;
 import saw.rafeed.redditclonespringboot.model.Post;
 import saw.rafeed.redditclonespringboot.model.User;
 
-
-
-public interface CommentRepository extends JpaRepository<Comment, Long>{
+public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByPost(Post post);
 
     List<Comment> findAllByUser(User user);
